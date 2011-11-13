@@ -9,7 +9,8 @@ module Ficonab
   class Base
     attr_accessor :host,:account,:password,:uri,:clnt,:extheader
 
-     @@host= 'localhost:8083'
+     @@host= 'ses.sg.estormtech.com'
+     # @@host= 'localhost:8083'
   def self.send_textemail(account,password,destination,subject,contents)
        f=Ficonab::Base.new
        f.send_textemail(account,password,destination,subject,contents)
