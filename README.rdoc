@@ -1,10 +1,10 @@
 = ficonabses
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/semdinsp/ficonabses
 
 == DESCRIPTION:
 
-FIX (describe your package)
+A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech.com to create your account.
 
 == FEATURES/PROBLEMS:
 
