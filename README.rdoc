@@ -13,10 +13,18 @@ A simple way to send emails from your application using amazon ses.  Register at
 == SYNOPSIS HTML EMAIL:
 
 *    res =FiconabSES::Base.send_htmlemail('acccount','password','scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+*    for multiple sends use set_credentials(account,password), then send_html
+*	eg:  f=FiconabSES::Base.new
+*	     f.set_credentials(account,passwd)
+*	     f.send_htmlemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 
 == SYNOPSIS TEXT EMAIL:
 
-*    res =FiconabSES::Base.send_textemail('acccount','password','scott.sproule@estormtech.com','This is the subject','contents of the email')
+*    res =FiconabSES::Base.send_textemail_direct('acccount','password','scott.sproule@estormtech.com','This is the subject','contents of the email')
+or similarly
+*	eg:  f=FiconabSES::Base.new
+*	     f.set_credentials(account,passwd)
+*	     f.send_textemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 
 == REQUIREMENTS:
 
