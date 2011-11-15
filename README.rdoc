@@ -4,20 +4,20 @@
 
 == DESCRIPTION:
 
-A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech.com to create your account.
+A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com] to create your account.
 
 == FEATURES/PROBLEMS:
 
-* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at http://admin.ses.sg.estormtech.com
+* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com]
 
 == SYNOPSIS HTML EMAIL:
 
 *    res =FiconabSES::Base.send_htmlemail('acccount','password','scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 *    for multiple sends use set_credentials(account,password), then send_html
 *	eg:  
-		f=FiconabSES::Base.new
-		f.set_credentials(account,passwd)
-		f.send_htmlemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+	f=FiconabSES::Base.new
+	f.set_credentials(account,passwd)
+	f.send_htmlemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 
 == SYNOPSIS TEXT EMAIL:
 
@@ -37,7 +37,7 @@ or similarly
 * sudo gem install ficonabses httpclient
 
 == DEPENDENCY:   
-	dependency on httpclient.
+*	dependency on httpclient.
 
 == LICENSE:
 
