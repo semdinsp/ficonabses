@@ -31,6 +31,11 @@ module FiconabSES
         f.set_credentials(account,password)
         f.send_htmlemail(destination,subject,htmlcontents,textcontents)
    end
+   def self.send_template_direct(account,password,destination,templatename)
+         f=FiconabSES::Base.new
+         f.set_credentials(account,password)
+         f.send_template(destination,templatename)
+    end
   def perform(url)
      @uri=URI.parse(url)
      raise 'credentials not set' if @account==nil
@@ -51,8 +56,16 @@ module FiconabSES
          res
     
   end
+  def action_url(action,destination)
+    url="http://#{@@host}/#{action}?destination=#{URI.encode(destination)}"
+    url
+  end
   def text_url(destination,subject,contents)
-    url="http://#{@@host}/ficonabsendemail?destination=#{URI.encode(destination)}&text=#{URI.encode(contents)}&subject=#{URI.encode(subject)}" 
+    url="#{self.action_url('ficonabsendemail',destination)}&subject=#{URI.encode(subject)}&text=#{URI.encode(contents)}" 
+    url
+  end
+  def template_url(destination,templatename)
+    url="#{self.action_url('ficonabsimpleemail',destination)}&template=#{URI.encode(templatename)}" 
     url
   end
   def html_url(destination,subject,contents,html)
@@ -61,16 +74,21 @@ module FiconabSES
   end
   def send_textemail(destination,subject,contents)
     url=self.text_url(destination,subject,contents)
-    puts "url is: #{url}"
-   
-     perform(url)
+    #puts "url is: #{url}"
+    perform(url)
      #  res
   end
-  def send_htmlemail(destination,subject,htmlcontents,textcontents=nil)
-     url=self.html_url(destination,subject,textcontents,htmlcontents)
+  def send_template(destination,templatename)
+     url=self.template_url(destination,templatename)
      puts "url is: #{url}"
-    
-      perform(url)
+     perform(url)
+      #  res
+   end
+  def send_htmlemail(destination,subject,htmlcontents,textcontents=nil)
+      textcontents='-' if textcontents==nil
+     url=self.html_url(destination,subject,textcontents,htmlcontents)
+     #puts "url is: #{url}" 
+     perform(url)
       #  res
    end
 

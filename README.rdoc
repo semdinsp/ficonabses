@@ -19,15 +19,26 @@ A simple way to send emails from your application using amazon ses.  Register at
 *   or similarly functionality eg:  
       f=FiconabSES::Base.new
       f.set_credentials(account,passwd)
-      f.send_htmlemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+      f.send_htmlemail(@destination,'This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 
 == SYNOPSIS TEXT EMAIL:
 
-*   res =FiconabSES::Base.send_textemail_direct('acccount','password','scott.sproule@estormtech.com','This is the subject','contents of the email') 
+*   res =FiconabSES::Base.send_textemail_direct('acccount','password',@destination,'This is the subject','contents of the email') 
 *  or similarly functionality eg:  
       f=FiconabSES::Base.new
       f.set_credentials(account,passwd)
-      f.send_textemail('scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+      f.send_textemail(@destination,'This is the subject','text contents of the email')
+
+== SYNOPSIS USING A TEMPLATE:
+* The subject and contents of the template are defined on the system.  See admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com].  As well as a bcc variable is also possible to be defined to automatically copy an adress
+
+*    res =FiconabSES::Base.send_template_direct(@account,@passwd,@destination,templatename)
+*   or similarly using objects
+      f=FiconabSES::Base.new
+      f.set_credentials(@account,@passwd)
+      res =f.send_template('scott.sproule@gmail.com','testtemplate')
+
+== SYNOPSIS USING A TEMPLATE PLUS PARAMTERS
 
 == REQUIREMENTS:
 
@@ -38,7 +49,10 @@ A simple way to send emails from your application using amazon ses.  Register at
 * sudo gem install ficonabses httpclient
 
 == DEPENDENCY:   
-*	dependency on httpclient.
+*   dependency on httpclient.
+
+== TESTS
+*   See the tests files attached to the gem or on this website
 
 == LICENSE:
 
