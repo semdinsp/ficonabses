@@ -8,19 +8,26 @@ A simple way to send emails from your application using amazon ses.  Register at
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at http://admin.ses.sg.estormtech.com
 
-== SYNOPSIS:
+== SYNOPSIS HTML EMAIL:
 
-  FIX (code sample of usage)
+*    res =FiconabSES::Base.send_htmlemail('acccount','password','scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+
+== SYNOPSIS TEXT EMAIL:
+
+*    res =FiconabSES::Base.send_textemail('acccount','password','scott.sproule@estormtech.com','This is the subject','contents of the email')
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* httpclient gem and ses.sg.estormtech.com is up and you have an account/password at admin.ses.sg.estormtech.com.
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install ficonabses httpclient
+
+== DEPENDENCY:   
+	dependency on httpclient.
 
 == LICENSE:
 

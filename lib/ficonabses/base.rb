@@ -5,16 +5,20 @@ require 'httpclient'
 gem 'nokogiri'
 require 'nokogiri'
 
-module Ficonab
+module FiconabSES
   class Base
     attr_accessor :host,:account,:password,:uri,:clnt,:extheader
 
      @@host= 'ses.sg.estormtech.com'
      # @@host= 'localhost:8083'
   def self.send_textemail(account,password,destination,subject,contents)
-       f=Ficonab::Base.new
+       f=FiconabSES::Base.new
        f.send_textemail(account,password,destination,subject,contents)
   end
+  def self.send_htmlemail(account,password,destination,subject,htmlcontents,textcontents=nil)
+        f=FiconabSES::Base.new
+        f.send_htmlemail(account,password,destination,subject,htmlcontents,textcontents)
+   end
   def perform(account,password,url)
      @uri=URI.parse(url)
     res=''
@@ -34,14 +38,26 @@ module Ficonab
          res
     
   end
+  def text_url(destination,subject,contents)
+    url="http://#{@@host}/ficonabsendemail?destination=#{URI.encode(destination)}&text=#{URI.encode(contents)}&subject=#{URI.encode(subject)}" 
+    url
+  end
+  def html_url(destination,subject,contents,html)
+    contents='' if contents==nil
+    url="#{self.text_url(destination,subject,contents)}&html=#{URI.encode(contents)}"
+  end
   def send_textemail(account,password,destination,subject,contents)
-   
-
-url="http://#{@@host}/ficonabsendemail?destination=#{URI.encode(destination)}&text=#{URI.encode(contents)}&subject=#{URI.encode(subject)}"   
+    url=self.text_url(destination,subject,contents)
     puts "url is: #{url}"
      perform(account,password,url)
      #  res
-end
+  end
+  def send_htmlemail(account,password,destination,subject,htmlcontents,textcontents=nil)
+     url=self.html_url(destination,subject,textcontents,htmlcontents)
+     puts "url is: #{url}"
+      perform(account,password,url)
+      #  res
+   end
 
    end    # Class
 end    #Module

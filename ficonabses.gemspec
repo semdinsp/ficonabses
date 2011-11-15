@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "ficonabses"
-  s.version     = "0.1.1"
+  s.version     = "0.1.2"
   s.author      = "Scott Sproule"
   s.email       = "scott.sproule@estormtech.com"
   s.homepage    = "http://github.com/semdinsp/ficonabses"
