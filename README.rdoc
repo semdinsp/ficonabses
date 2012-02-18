@@ -58,7 +58,12 @@ A simple way to send emails from your application using amazon ses.  Register at
 * This allows you structure a sequence of emails/customer interaction based on parameters. (eg you could email the customer something and send them an apple push notification at the same time)
 
 ==BINARY FILES
-* ficionabses_template.rb  - Send a template to a destination ficonabses_template.rb --help for more information
+* ficonabses_template_test.rb  - Send a template to a destination.  Type  'ficonabses_template_test.rb --help' in a terminal on your cmpueter for more information
+* fionabses_csv.rb  - Send the contents of csv file to the system for email broadcash.  The file should be in destination,templatename,param1,params2 format with headers.  A sample file follows:
+sample file:
+*    destination,template,param1,receipt
+*    scott.sproule@estormtech.com,testtemplate,test,test2
+*    eka.mardiarti@estormtech.com,testtemplate,test,test2
 
 
 == REQUIREMENTS:
@@ -76,6 +81,8 @@ A simple way to send emails from your application using amazon ses.  Register at
 == TESTS
 *   See the tests files attached to the gem or on this website
 
+== CAVEATS
+*   The parameters need to be passed in as a hash as the code relies on it being a hash to build the URL string.
 == LICENSE:
 
 (The MIT License)
