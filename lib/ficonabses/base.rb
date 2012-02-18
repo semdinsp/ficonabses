@@ -4,7 +4,19 @@ gem 'httpclient'
 require 'httpclient'
 gem 'nokogiri'
 require 'nokogiri'
-
+class Object
+  def to_query(key)
+    require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
+    "#{CGI.escape(key.to_s)}=#{CGI.escape(self.to_s)}"
+  end
+end
+class Hash
+  def to_param(namespace = nil)
+    collect do |key, value|
+      value.to_query(namespace ? "#{namespace}[#{key}]" : key)
+    end.sort * '&'
+  end
+end
 module FiconabSES
   class Base
     attr_accessor :host,:account,:password,:uri,:clnt,:extheader
@@ -36,13 +48,23 @@ module FiconabSES
          f.set_credentials(account,password)
          f.send_template(destination,templatename)
     end
+     def self.send_template_params_direct(account,password,destination,templatename,options={})
+           f=FiconabSES::Base.new
+           f.set_credentials(account,password)
+           f.send_template_params(destination,templatename,options)
+      end  
+   def self.send_campaign_flow_direct(account,password,destination,templatename,options={})
+               f=FiconabSES::Base.new
+               f.set_credentials(account,password)
+               f.send_campaign_flow(destination,templatename,options)
+  end      
   def perform(url)
      @uri=URI.parse(url)
      raise 'credentials not set' if @account==nil
     res=''
      begin
        # Don't take longer than 60 seconds  -- incase there is a problem with our server continue
-       Timeout::timeout(60) do
+       Timeout::timeout(90) do
          @clnt=HTTPClient.new 
          @clnt.set_auth(nil, @account, @password)   
          @extheader = { 'Content-Type' => 'application/xml' }
@@ -65,9 +87,17 @@ module FiconabSES
     url
   end
   def template_url(destination,templatename)
-    url="#{self.action_url('ficonabsimpleemail',destination)}&template=#{URI.encode(templatename)}" 
+    url="#{self.action_url('ficonabsimpletemplate',destination)}&template=#{URI.encode(templatename)}" 
     url
   end
+  def template_url_params(destination,templatename,options)
+    url="#{self.action_url('ficonabcomplextemplate',destination)}&template=#{URI.encode(templatename)}&#{options.to_param}" 
+    url
+  end
+  def campaign_flow_params(destination,templatename,options)
+     url="#{self.action_url('ficonabcampaignflow',destination)}&campaignflow=#{URI.encode(templatename)}&#{options.to_param}" 
+     url
+   end
   def html_url(destination,subject,contents,html)
     contents='' if contents==nil
     url="#{self.text_url(destination,subject,contents)}&html=#{URI.encode(html)}"
@@ -80,10 +110,22 @@ module FiconabSES
   end
   def send_template(destination,templatename)
      url=self.template_url(destination,templatename)
-     puts "url is: #{url}"
+   #  puts "url is: #{url}"
      perform(url)
       #  res
    end
+   def send_template_params(destination,templatename,options={})
+      url=self.template_url_params(destination,templatename,options)
+      puts "url is: #{url}"
+      perform(url)
+       #  res
+    end
+    def send_campaign_flow(destination,campaign_name,options={})
+        url=self.campaign_flow_params(destination,campaign_name,options)
+        puts "url is: #{url}"
+        perform(url)
+         #  res
+     end  
   def send_htmlemail(destination,subject,htmlcontents,textcontents=nil)
       textcontents='-' if textcontents==nil
      url=self.html_url(destination,subject,textcontents,htmlcontents)

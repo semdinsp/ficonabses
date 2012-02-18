@@ -2,19 +2,20 @@
 
 * http://github.com/semdinsp/ficonabses
 
+== REASONABLY PRODUCTION READY:
 == DESCRIPTION:
 
-A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com] to create your account.
+A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com] to create your account.  Templates can be emails or Apple Push Notifications.  APNs require more configuration so please contact estormtech directly to implement this functionality but the same code will send either  in your application.
 
 == FEATURES/PROBLEMS:
 
-* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com]
+* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com].  
 
 * You can send spontaneous emails directly in your code.  Or more elegantly you can set up a template on the system and send it with contents inserted in the parameters of the call.  That way you can change the template (eg have a different design for Halloween or Eid or Christmas) while not touching your production code.
 
 == SYNOPSIS HTML EMAIL:
 
-*   res =FiconabSES::Base.send_htmlemail('acccount','password','scott.sproule@estormtech.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
+*   res =FiconabSES::Base.send_htmlemail('acccount','password','destination@xxxxx.com','This is the subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
 *   for multiple sends use set_credentials(account,password), then send_html
 *   or similarly functionality eg:  
       f=FiconabSES::Base.new
@@ -30,19 +31,40 @@ A simple way to send emails from your application using amazon ses.  Register at
       f.send_textemail(@destination,'This is the subject','text contents of the email')
 
 == SYNOPSIS USING A TEMPLATE:
-* The subject and contents of the template are defined on the system.  See admin.ses.sg.estormtech[http:admin.ses.sg.estormtech.com].  As well as a bcc variable is also possible to be defined to automatically copy an adress
+* The subject and contents of the template are defined on the system.  See admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com].  As well as a bcc variable is also possible to be defined to automatically copy an addresss.  The template may be an email or an apple push notification.
 
 *    res =FiconabSES::Base.send_template_direct(@account,@passwd,@destination,templatename)
 *   or similarly using objects
       f=FiconabSES::Base.new
       f.set_credentials(@account,@passwd)
-      res =f.send_template('scott.sproule@gmail.com','testtemplate')
+      res =f.send_template(@destination,'testtemplate')
 
-== SYNOPSIS USING A TEMPLATE PLUS PARAMTERS
+== SYNOPSIS USING A TEMPLATE PLUS PARAMETERS
+* This allows you to have a dynamic template and fill in the details in the template dynamically.  (eg insert url, customer name) into the template just by attaching the values to the call in a ruby hash.
+
+*    res =FiconabSES::Base.send_template_params_direct(@account,@passwd,@destination,templatename,options)
+*   or similarly using objects
+      f=FiconabSES::Base.new
+      options={}
+      options['customername']='Mr Test'  #in the template {customername} will be replaced with Mr Test
+      f.set_credentials(@account,@passwd,options)
+      res =f.send_template(@destination,'testtemplate')
+
+== SYNOPSIS SENDING RUBY EXCEPTION
+* This allows you mail a ruby exception report directly from your application.
+*    res =FiconabSES::Addons.send_exception_direct(@account,@passwd,@destination,exception)
+
+== CAMPAIGN FLOWS
+* This allows you structure a sequence of emails/customer interaction based on parameters. (eg you could email the customer something and send them an apple push notification at the same time)
+
+==BINARY FILES
+* ficionabses_template.rb  - Send a template to a destination ficonabses_template.rb --help for more information
+
 
 == REQUIREMENTS:
 
 * httpclient gem and ses.sg.estormtech.com is up and you have an account/password at admin.ses.sg.estormtech.com.
+
 
 == INSTALL:
 
@@ -58,7 +80,7 @@ A simple way to send emails from your application using amazon ses.  Register at
 
 (The MIT License)
 
-Copyright (c) 2011 FIXME full name
+Copyright (c) 2011 Estorm Technologies Pte Ltd.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

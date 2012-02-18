@@ -7,30 +7,36 @@ class TestFiconabses < Test::Unit::TestCase
     @account=ACCOUNT   #in test_secret.rb put ACCOUNT='youraccount' or insert your parameters direclty here  eg @ACCOUNT='myaccount'
     @passwd=PASSWD   #in test_secret.rb put PASSWD='yourpasswd'
     @destination=DESTINATION   # eg your email address 'xxx@yyyy.com'
-    
+    @tsipid = TSIPID
   end
   def test_creds
     puts "CREDENTIALS ARE: account: #{@account} passwd: #{@passwd}"
    # self assert true
   end
+  
   def test_send_text_direct
     puts 'SEND TEXT DIRECT'
     res =FiconabSES::Base.send_textemail_direct(@account,@passwd,@destination,'This is the subject','contents of the email')
     #puts "RES is: #{res}"
     assert res.include? '200'
   end
+  
   def test_send_html_direct
     puts "SEND HTML DIRECT"
     res =FiconabSES::Base.send_htmlemail_direct(@account,@passwd,@destination,'This is the HTML subject','<h1>HTML Contents</h1><p>hi from paragraph</p>','text contents of the email')
     #puts "RES is: #{res}"
     assert res.include? '200'
+    assert false==(res.include? 'Error')
   end
+
   def test_send_html_nil_text
      puts "SEND HTML with NIL text"
      res =FiconabSES::Base.send_htmlemail_direct(@account,@passwd,@destination,'This is HTML Subject nil text','<h1>HTML Contents</h1><p>hi from paragraph</p>')  #no text portion
      puts "RES is: #{res}"
      assert res.include? '200'
+     assert false==(res.include? 'Error')
    end
+ 
    def test_send_emails
         f=FiconabSES::Base.new
         f.set_credentials(@account,@passwd)
@@ -40,7 +46,19 @@ class TestFiconabses < Test::Unit::TestCase
        res =f.send_textemail(@destination,'This is TEXT Subject nil text','contents')  #no text portion
        # puts "RES is: #{res}"
         assert res.include? '200'
-     end
+        assert false==(res.include? 'Error')
+      end
+ 
+       def test_apn_template_params
+                  options={}
+                  options['hello']='TESTING'
+                   f=FiconabSES::Base.new
+                    f.set_credentials(@account,@passwd)
+                  res =f.send_template_params(@tsipid,'apn_template',options)  #no text portion
+                  puts "RES is: #{res}"
+                  assert res.include? '200'
+                   assert false==(res.include? 'Error')
+       end
       def test_no_credentials
            f=FiconabSES::Base.new
            assert_raise RuntimeError do   #should raise runtime error
