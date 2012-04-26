@@ -2,16 +2,15 @@
 usage=<<EOF_USAGE
 
 # == Synopsis
-#   read a csv file and send through FiconabSES
+#   read a csv file and blacklist it
 # == Usage
-#  ficonabses_csv.rb -u username -p password -f csvfile.name -C
-# csv file needs to be in the format (including headers) with destination, template, asmanyparameters as needed separated by commas
-# -C sends campaignflow
-# For campaigns csv file needs to be in the format (including headers) with destination, campaign, asmanyparameters as needed separated by commas
+#  ficonabses_blacklist.rb -u username -p password -f csvfile.name -D
+# csv file needs to be in the format (including headers) with destination,
+# -D debug
 # == Author
 #   Scott Sproule  --- Ficonab.com (scott.sproule@ficonab.com)
 # == Example
-#  ficonabses_csv.rb -u xxxx -p yyyy -f yyy.csv
+#  ficonabses_blacklist.rb -u xxxx -p yyyy -f yyy.csv
 # == Copyright
 #    Copyright (c) 2011 Ficonab Pte. Ltd.
 #     See license for license details
@@ -26,16 +25,14 @@ require 'ficonabses'
 require 'optparse'
 #require 'java' if RUBY_PLATFORM =~ /java/
 # start the processing
-def send_row(ficonab,row,flag)
+def send_row(ficonab,row,username)
   #puts "row destination: #{row['destination']} template: #{row['template']} campaign: #{row['campaign']} campaign flag: #{flag}"
    row['destination'].strip!
-   row['campaign'].strip! if flag
-    row['template'].strip! if !flag
     sleep(0.2)
     if row!=nil then
     
-     res =ficonab.send_template_params(row['destination'],row['template'],row) if !flag
-     res =ficonab.send_campaign_flow(row['destination'],row['campaign'],row) if flag
+     res =ficonab.global_blacklist(row['destination'],username)
+   
    end
      res
 end
@@ -52,7 +49,6 @@ require 'pp'
     @f.set_debug if options[:debug]  # if debug sends to localhost
      count=0
      flag=false
-     flag=options[:campaign] if options[:campaign]
       #send_template(options[:template],'7923044488','scott.sproule@gmail.com',count+=1)
       rows=FiconabSES::Addons.readfile(options[:filename])
       rows.each {|row|   
@@ -60,7 +56,7 @@ require 'pp'
         begin
           hash={}
           hash=hash.merge row
-          res=send_row(@f,hash.clone,flag)
+          res=send_row(@f,hash.clone,options[:username])
           puts "COUNT: #{count} result: #{res} row: #{hash} "
         count+=1
 

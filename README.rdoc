@@ -40,7 +40,7 @@ A simple way to send emails from your application using amazon ses.  Register at
       res =f.send_template(@destination,'testtemplate')
 
 == SYNOPSIS USING A TEMPLATE PLUS PARAMETERS
-* This allows you to have a dynamic template and fill in the details in the template dynamically.  (eg insert url, customer name) into the template just by attaching the values to the call in a ruby hash.
+* This allows you to have a dynamic template and fill in the details in the template dynamically.  (eg insert url, customer name) into the template just by attaching the values to the call in a ruby hash.  If the destination is part of a black list you will receive HTTP Status code 412 (precondition failed)
 
 *    res =FiconabSES::Base.send_template_params_direct(@account,@passwd,@destination,templatename,options)
 *   or similarly using objects

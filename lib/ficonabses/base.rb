@@ -53,6 +53,11 @@ module FiconabSES
            f.set_credentials(account,password)
            f.send_template_params(destination,templatename,options)
       end  
+      def self.global_blacklist_direct(account,password,destination)
+             f=FiconabSES::Base.new
+             f.set_credentials(account,password)
+             f.global_blacklist(destination,account)
+     end
    def self.send_campaign_flow_direct(account,password,destination,templatename,options={})
                f=FiconabSES::Base.new
                f.set_credentials(account,password)
@@ -64,12 +69,18 @@ module FiconabSES
     res=''
      begin
        # Don't take longer than 60 seconds  -- incase there is a problem with our server continue
-       Timeout::timeout(90) do
          @clnt=HTTPClient.new 
+       Timeout::timeout(90) do
          @clnt.set_auth(nil, @account, @password)   
          @extheader = { 'Content-Type' => 'application/xml' }
          res=self.clnt.get_content(self.uri,self.extheader)
        end
+     rescue HTTPClient::BadResponseError
+         Timeout::timeout(15) do
+            puts "BAD RESPONSE - retrying once"
+            res=self.clnt.get_content(self.uri,self.extheader)
+          end
+         # bad response  - try it again?
      rescue Timeout::Error
        # Too slow!!
       res="failure to connect"
@@ -84,6 +95,10 @@ module FiconabSES
   end
   def text_url(destination,subject,contents)
     url="#{self.action_url('ficonabsendemail',destination)}&subject=#{URI.encode(subject)}&text=#{URI.encode(contents)}" 
+    url
+  end
+  def global_blacklist_url(destination,username)
+    url="#{self.action_url('ficonabaction',destination)}&type=globalunsubscribe&user=#{URI.encode(username)}" 
     url
   end
   def template_url(destination,templatename)
@@ -120,6 +135,12 @@ module FiconabSES
       perform(url)
        #  res
     end
+     def global_blacklist(destination,username)
+          url=self.global_blacklist_url(destination,username)
+          puts "url is: #{url}"
+          perform(url)
+           #  res
+       end
     def send_campaign_flow(destination,campaign_name,options={})
         url=self.campaign_flow_params(destination,campaign_name,options)
         puts "url is: #{url}"

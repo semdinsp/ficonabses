@@ -22,6 +22,7 @@ module FiconabSES
   #     opts.on("-s","--start VAL", Integer) {|val|  temp_hash[:start] = val
    #                    puts "# start mapping is #{temp_hash[:start]}"   }                                                                                     
        opts.on("-D","--debug", "turn on debug") { |val| temp_hash[:debug ] = true              }  
+        opts.on("-C","--campaign_flow", "turn on campaign flow") { |val| temp_hash[:campaign] = true              }  
               
       opts.on("-t","--template VAL", String) { |val| temp_hash[:template] = val  
                                   puts "# tsipid key #{temp_hash[:template]}"            } 
