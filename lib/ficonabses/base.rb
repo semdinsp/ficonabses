@@ -76,8 +76,9 @@ module FiconabSES
          res=self.clnt.get_content(self.uri,self.extheader)
        end
      rescue HTTPClient::BadResponseError
+         sleep(5)   # take a break to see if it is too busy
          Timeout::timeout(15) do
-            puts "BAD RESPONSE - retrying once"
+            puts "BAD RESPONSE - retrying once #{self.uri}"
             res=self.clnt.get_content(self.uri,self.extheader)
           end
          # bad response  - try it again?

@@ -31,9 +31,8 @@ def send_row(ficonab,row,flag)
    row['destination'].strip!
    row['campaign'].strip! if flag
     row['template'].strip! if !flag
-    sleep(0.2)
-    if row!=nil then
-    
+    sleep(0.05)
+    if row!=nil then    
      res =ficonab.send_template_params(row['destination'],row['template'],row) if !flag
      res =ficonab.send_campaign_flow(row['destination'],row['campaign'],row) if flag
    end
