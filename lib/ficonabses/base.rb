@@ -62,29 +62,40 @@ module FiconabSES
                f=FiconabSES::Base.new
                f.set_credentials(account,password)
                f.send_campaign_flow(destination,templatename,options)
-  end      
+  end     
+  def build_client
+    if @clnt==nil then
+     @clnt=HTTPClient.new 
+     @clnt.set_auth(nil, @account, @password)   
+     @extheader = { 'Content-Type' => 'application/xml' }
+   end
+      @clnt
+  end 
   def perform(url)
      @uri=URI.parse(url)
+    # puts "url is #{url}"
      raise 'credentials not set' if @account==nil
     res=''
      begin
        # Don't take longer than 60 seconds  -- incase there is a problem with our server continue
-         @clnt=HTTPClient.new 
-       Timeout::timeout(90) do
-         @clnt.set_auth(nil, @account, @password)   
-         @extheader = { 'Content-Type' => 'application/xml' }
+         @clnt=self.build_client 
+       Timeout::timeout(60) do    
          res=self.clnt.get_content(self.uri,self.extheader)
        end
-     rescue HTTPClient::BadResponseError
+     rescue Timeout::Error,HTTPClient::BadResponseError
+          
+         # puts "res is #{res.inspect}"
+          res='bad response or timeout'
+          puts "BAD RESPONSE or Timeout - retrying once #{self.uri} after five seconds"
          sleep(5)   # take a break to see if it is too busy
-         Timeout::timeout(15) do
-            puts "BAD RESPONSE - retrying once #{self.uri}"
+         Timeout::timeout(25) do   
             res=self.clnt.get_content(self.uri,self.extheader)
+            puts "RETRY: second chance res is #{res}"
           end
          # bad response  - try it again?
-     rescue Timeout::Error
+     #rescue Timeout::Error
        # Too slow!!
-      res="failure to connect"
+     # res="failure to connect"
      end
       
          res
@@ -100,6 +111,10 @@ module FiconabSES
   end
   def global_blacklist_url(destination,username)
     url="#{self.action_url('ficonabaction',destination)}&type=globalunsubscribe&user=#{URI.encode(username)}" 
+    url
+  end
+  def get_template_list_url(destination,username)
+    url="#{self.action_url('ficonabaction',destination)}&type=gettemplates&user=#{URI.encode(username)}" 
     url
   end
   def template_url(destination,templatename)
@@ -132,19 +147,25 @@ module FiconabSES
    end
    def send_template_params(destination,templatename,options={})
       url=self.template_url_params(destination,templatename,options)
-      puts "url is: #{url}"
+    #  puts "url is: #{url}"
       perform(url)
        #  res
     end
      def global_blacklist(destination,username)
           url=self.global_blacklist_url(destination,username)
-          puts "url is: #{url}"
+   #       puts "url is: #{url}"
           perform(url)
            #  res
        end
+   def get_template_list(destination,username)
+               url=self.get_template_list_url(destination,username)
+    #           puts "url is: #{url}"
+               perform(url)
+                #  res
+    end
     def send_campaign_flow(destination,campaign_name,options={})
         url=self.campaign_flow_params(destination,campaign_name,options)
-        puts "url is: #{url}"
+    #    puts "url is: #{url}"
         perform(url)
          #  res
      end  

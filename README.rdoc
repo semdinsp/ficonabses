@@ -47,8 +47,8 @@ A simple way to send emails from your application using amazon ses.  Register at
       f=FiconabSES::Base.new
       options={}
       options['customername']='Mr Test'  #in the template {customername} will be replaced with Mr Test
-      f.set_credentials(@account,@passwd,options)
-      res =f.send_template(@destination,'testtemplate')
+      f.set_credentials(@account,@passwd)
+      res =f.send_template_params(@destination,'testtemplate',options)
 
 == SYNOPSIS SENDING RUBY EXCEPTION
 * This allows you mail a ruby exception report directly from your application.
@@ -56,6 +56,15 @@ A simple way to send emails from your application using amazon ses.  Register at
 
 == CAMPAIGN FLOWS
 * This allows you structure a sequence of emails/customer interaction based on parameters. (eg you could email the customer something and send them an apple push notification at the same time)
+
+*   Exactly the same calling sequence as for templates.
+      f=FiconabSES::Base.new
+      options={}
+      options['customername']='Mr Test'  #in the template {customername} will be replaced with Mr Test
+      f.set_credentials(@account,@passwd)
+       res =@f.send_campaign_flow(@destination,'testcampaign',options) 
+
+
 
 ==BINARY FILES
 * ficonabses_template_test.rb  - Send a template to a destination.  Type  'ficonabses_template_test.rb --help' in a terminal on your cmpueter for more information

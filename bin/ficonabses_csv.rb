@@ -31,7 +31,7 @@ def send_row(ficonab,row,flag)
    row['destination'].strip!
    row['campaign'].strip! if flag
     row['template'].strip! if !flag
-    sleep(0.05)
+   # sleep(0.05)
     if row!=nil then    
      res =ficonab.send_template_params(row['destination'],row['template'],row) if !flag
      res =ficonab.send_campaign_flow(row['destination'],row['campaign'],row) if flag
@@ -50,6 +50,7 @@ require 'pp'
     @f.set_credentials(options[:username],options[:password])
     @f.set_debug if options[:debug]  # if debug sends to localhost
      count=0
+     errors=0
      flag=false
      flag=options[:campaign] if options[:campaign]
       #send_template(options[:template],'7923044488','scott.sproule@gmail.com',count+=1)
@@ -64,10 +65,11 @@ require 'pp'
         count+=1
 
         rescue Exception => e
+          errors+=1
         puts "Found count: #{count} error #{e.inspect}"
         end 
         }
      
  
 # puts "response is list is #{list.to_yaml} #{finallist.to_yaml}" 
-   puts "[#{Time.now}] FINISHED: sending: #{count}"
+   puts "[#{Time.now}] FINISHED: sending: #{count}  error count #{errors}"
