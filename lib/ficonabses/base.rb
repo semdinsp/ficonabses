@@ -169,6 +169,12 @@ module FiconabSES
         perform(url)
          #  res
      end  
+ def send_campaign_flow_old(destination,campaign_name,options={})
+           url=self.campaign_flow_params(destination,campaign_name,options)
+       #    puts "url is: #{url}"
+           perform(url)
+            #  res
+ end
   def send_htmlemail(destination,subject,htmlcontents,textcontents=nil)
       textcontents='-' if textcontents==nil
      url=self.html_url(destination,subject,textcontents,htmlcontents)
