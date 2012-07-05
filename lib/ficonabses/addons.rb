@@ -5,6 +5,15 @@ module FiconabSES
          f.set_credentials(account,password)
          FiconabSES::Addons.send_ruby_exception(f,exception,destination,nil)
     end
+    def self.send_bulk_direct(account,password,bulkdata)
+         f=FiconabSES::Base.new
+         f.set_credentials(account,password)
+         FiconabSES::Addons.send_bulk(f,bulkdata)
+    end
+    def self.send_bulk(ficonab_obj,bulkdata)
+      puts "BULK DATA is #{bulkdata}"
+      res =ficonab_obj.send_bulk(bulkdata)
+    end
     def self.readfile(filename)
         csvfile=File.open(filename,'r') 
         rawfile= FasterCSV.parse(csvfile.read, { :headers           => true})

@@ -71,7 +71,13 @@ module FiconabSES
    end
       @clnt
   end 
-  def perform(url)
+  def client_action(postflag,postdata)
+    puts "FLAG: #{postflag} DATA: #{postdata}"
+     result=self.clnt.get_content(self.uri,self.extheader) if !postflag
+     result = self.clnt.post_content(self.uri, postdata,{'Content-Type' => 'application/x-www-form-urlencoded'}) if postflag
+     result
+  end
+  def perform(url,postflag=false,postdata={})
      @uri=URI.parse(url)
     # puts "url is #{url}"
      raise 'credentials not set' if @account==nil
@@ -80,7 +86,8 @@ module FiconabSES
        # Don't take longer than 60 seconds  -- incase there is a problem with our server continue
          @clnt=self.build_client 
        Timeout::timeout(60) do    
-         res=self.clnt.get_content(self.uri,self.extheader)
+          # original res=self.clnt.get_content(self.uri,self.extheader)
+         res=self.client_action(postflag,postdata)
        end
      rescue Timeout::Error,HTTPClient::BadResponseError
           
@@ -89,7 +96,8 @@ module FiconabSES
           puts "BAD RESPONSE or Timeout - retrying once #{self.uri} after five seconds"
          sleep(5)   # take a break to see if it is too busy
          Timeout::timeout(25) do   
-            res=self.clnt.get_content(self.uri,self.extheader)
+           # original res=self.clnt.get_content(self.uri,self.extheader)
+              res=self.client_action(postflag,postdata)
             puts "RETRY: second chance res is #{res}"
           end
          # bad response  - try it again?
@@ -108,6 +116,11 @@ module FiconabSES
   def text_url(destination,subject,contents)
     url="#{self.action_url('ficonabsendemail',destination)}&subject=#{URI.encode(subject)}&text=#{URI.encode(contents)}" 
     url
+  end
+  def bulk_url
+    url="http://#{@@host}/ficonabbulkmanager?"
+    puts "BULK URL: #{url}"
+    url  
   end
   def global_blacklist_url(destination,username)
     url="#{self.action_url('ficonabaction',destination)}&type=globalunsubscribe&user=#{URI.encode(username)}" 
@@ -139,6 +152,11 @@ module FiconabSES
     perform(url)
      #  res
   end
+  def send_bulk(bulkdata)
+     url=self.bulk_url
+     perform(url,true,bulkdata)
+      #  res
+   end
   def send_template(destination,templatename)
      url=self.template_url(destination,templatename)
    #  puts "url is: #{url}"
@@ -170,6 +188,7 @@ module FiconabSES
          #  res
      end  
  def send_campaign_flow_old(destination,campaign_name,options={})
+           options["destination"]=destination
            url=self.campaign_flow_params(destination,campaign_name,options)
        #    puts "url is: #{url}"
            perform(url)

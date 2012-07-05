@@ -25,9 +25,12 @@ module FiconabSES
         opts.on("-C","--campaign_flow", "turn on campaign flow") { |val| temp_hash[:campaign] = true              }  
               
       opts.on("-t","--template VAL", String) { |val| temp_hash[:template] = val  
-                                  puts "# tsipid key #{temp_hash[:template]}"            } 
+                                  puts "# templateName #{temp_hash[:template]}"            } 
+        opts.on("-T","--tsipid VAL", String) { |val| temp_hash[:tsipid] = val  
+                                      puts "# tsipid #{temp_hash[:tsipid]}"            }                            
               
-
+      opts.on("-c","--campaign_flow VAL", String) { |val| temp_hash[:campaign_flow] = val 
+                                              puts "# campaign #{temp_hash[:campaign_flow]}"            }
       opts.on_tail("-H","--help", "get help message") { |val| temp_hash[:help ] = true    
                                                                                  puts opts          }                                      
                                        

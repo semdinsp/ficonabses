@@ -5,13 +5,13 @@
 == REASONABLY PRODUCTION READY:
 == DESCRIPTION:
 
-A simple way to send emails from your application using amazon ses.  Register at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com] to create your account.  Templates can be emails or Apple Push Notifications.  APNs require more configuration so please contact estormtech directly to implement this functionality but the same code will send either  in your application.
+A simple way to send transactional notifications from your application using amazon ses, sms and apple push notifications.  Register at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com] to create your account.  Templates can be emails, sms, or Apple Push Notifications.  APNs require more configuration so please contact estormtech (info@estormtech.com) directly to implement this functionality but the same code will send either  in your application.
 
 == FEATURES/PROBLEMS:
 
-* A simple way to send text and html emails from your application.  Templates for the contents of the email can be configured at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com].  
+* Templates for the contents of the email can be configured at admin.ses.sg.estormtech.com[http:admin.ses.sg.estormtech.com].  
 
-* You can send spontaneous emails directly in your code.  Or more elegantly you can set up a template on the system and send it with contents inserted in the parameters of the call.  That way you can change the template (eg have a different design for Halloween or Eid or Christmas) while not touching your production code.
+* You can send spontaneous emails, sms, APNs directly in your code.  Or more elegantly you can set up a template on the system and send it with contents inserted in the parameters of the call.  That way you can change the template (eg have a different design for Halloween or Eid or Christmas) while not touching your production code.
 
 == SYNOPSIS HTML EMAIL:
 
@@ -55,7 +55,7 @@ A simple way to send emails from your application using amazon ses.  Register at
 *    res =FiconabSES::Addons.send_exception_direct(@account,@passwd,@destination,exception)
 
 == CAMPAIGN FLOWS
-* This allows you structure a sequence of emails/customer interaction based on parameters. (eg you could email the customer something and send them an apple push notification at the same time)
+* This allows you structure a sequence of emails/customer interaction based on parameters. (eg you could email the customer something and send them an apple push notification at the same time)  (CAVEAT - as destination can be modified during the campaign flow we insert automatically destination into the options hash array.  This should have no impact on your code.  You can for example, change the destination to another parameter in the campaign flow).  The campaign flows can include time delays between sending emails or sms.  (Eg week1 welcome to the system, week2, did you know that etc.)
 
 *   Exactly the same calling sequence as for templates.
       f=FiconabSES::Base.new
@@ -63,6 +63,12 @@ A simple way to send emails from your application using amazon ses.  Register at
       options['customername']='Mr Test'  #in the template {customername} will be replaced with Mr Test
       f.set_credentials(@account,@passwd)
        res =@f.send_campaign_flow(@destination,'testcampaign',options) 
+
+== BULK DATA
+*     Send a bulk data file for processing the same template
+*    Similar to templates:
+       bulkdata={'xmllist' => "<destinations><destination address='scott.sproule@gmail.com' sendtime='12:00'></destination><destination address='scott.sproule@estormtech.com' sendtime='12:00'></destination></destinations>", "template"=>"expiring_trial"} 
+       res= FiconabSES::Addons.send_bulk(@f,bulkdata)   
 
 
 
