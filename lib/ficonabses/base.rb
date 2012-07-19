@@ -72,7 +72,7 @@ module FiconabSES
       @clnt
   end 
   def client_action(postflag,postdata)
-    puts "FLAG: #{postflag} DATA: #{postdata}"
+  #  puts "FLAG: #{postflag} DATA: #{postdata}"
      result=self.clnt.get_content(self.uri,self.extheader) if !postflag
      result = self.clnt.post_content(self.uri, postdata,{'Content-Type' => 'application/x-www-form-urlencoded'}) if postflag
      result
@@ -182,13 +182,14 @@ module FiconabSES
                 #  res
     end
     def send_campaign_flow(destination,campaign_name,options={})
+         options.delete('destination')  #duplicate destnations not allowed
         url=self.campaign_flow_params(destination,campaign_name,options)
     #    puts "url is: #{url}"
         perform(url)
          #  res
      end  
  def send_campaign_flow_old(destination,campaign_name,options={})
-           options["destination"]=destination
+           options.delete('destination') #duplicate destnations not allowed
            url=self.campaign_flow_params(destination,campaign_name,options)
        #    puts "url is: #{url}"
            perform(url)
